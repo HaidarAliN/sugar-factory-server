@@ -38,4 +38,12 @@ Route::group([
 ], function ($router) {
 
     Route::post('/add-picture', [userController::class, 'addPicture']);    
+    Route::post('/add-connection', [userController::class, 'addConnection']);    
+    Route::post('/remove-connection', [userController::class, 'removeConnection']);    
+    Route::post('/add-favorite', [userController::class, 'addFavorite']);    
+    Route::post('/block-user', [userController::class, 'blockUser']);    
+    Route::post('/send-message', [userController::class, 'sendMessage']);    
+    Route::post('/add-interest', [userController::class, 'addInterest']);    
+    Route::post('/add-hobby', [userController::class, 'addHobby']);    
+    Route::post('/notification', [userController::class, 'addNotification']);    
 });

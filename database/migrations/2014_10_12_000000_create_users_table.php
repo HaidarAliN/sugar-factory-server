@@ -71,7 +71,7 @@ class CreateUsersTable extends Migration
 		Schema::create('user_messages', function (Blueprint $table) {
             $table->id();
 			$table->integer('sender_id');
-            $table->integer('receiver_id');	
+            $table->integer('receiver_id');
 			$table->text('body');
 			$table->boolean('is_approved');	
 			$table->boolean('is_read');				

@@ -70,6 +70,29 @@ class User extends Authenticatable implements JWTSubject
     public function pictures(){
         return $this->hasMany(UserPicture::class, 'user_id');
     }
+
+    public function connection(){
+        return $this->belongsToMany(User::class, 'user_connections', 'user1_id', 'user2_id');
+    }
 	
+    public function favorite(){
+        return $this->belongsToMany(User::class, 'user_favorites', 'from_user_id', 'to_user_id');
+    }
+
+    public function blockUser(){
+        return $this->belongsToMany(User::class, 'user_blocked', 'from_user_id', 'to_user_id');
+    }
+
+    public function interests(){
+        return $this->hasMany(UserInterest::class, 'user_id');
+    }
+
+    public function hobbies(){
+        return $this->hasMany(UserHobby::class, 'user_id');
+    }
+
+    public function notifications(){
+        return $this->hasMany(UserNotification::class, 'user_id');
+    }
 	
 }
