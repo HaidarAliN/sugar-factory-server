@@ -22,26 +22,52 @@ class userController extends Controller
         $user_picture->is_profile_picture = $request->is_profile_picture;
         $user_picture->is_approved = 0;
         $user->pictures()->save($user_picture);
-
-        
         return response()->json([$user_picture], 200);
     }
 
-    public function addConnection(Request $request){
+    public function addFavorite(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
-        $user_to_add = User::find($request->user_id);
-        $user->connection()->save($user_to_add);
-
-        $response['status'] = "connection_created";
+        $favorited_by_other = User::find($request->user_id)->favorite()->where('to_user_id',$user_id)->first();
+        if($favorited_by_other){
+            $user_to_favorite = User::find($request->user_id);
+            $user->favorite()->save($user_to_favorite);
+            $this->addConnection($user_id, $request->user_id);
+            $second_user = User::find($request->user_id);
+            $user_notification = new UserNotification;
+            $user_notification->body = "$user->first_name $user->last_name has favorited you!";	
+            $user_notification->is_read = 0;	
+            $second_user->notifications()->save($user_notification);
+            $user_notification = new UserNotification;
+            $user_notification->body = "You and $user->first_name $user->last_name are now Connected!";	
+            $user_notification->is_read = 0;	
+            $second_user->notifications()->save($user_notification);
+            $user_notification->body = "You and $second_user->first_name $second_user->last_name are now Connected!";	
+            $user->notifications()->save($user_notification);
+            $response['action'] = 'Connection createrd';
+            $response['status'] = "add_favorite";
+            return response()->json([$response], 200);
+        }
+        $user_to_favorite = User::find($request->user_id);
+        $user->favorite()->save($user_to_favorite);
+        $user_notification = new UserNotification;
+        $user_notification->body = "$user->first_name $user->last_name has favorited you!";	
+		$user_notification->is_read = 0;	
+        $user_to_favorite->notifications()->save($user_notification);
+        $response['status'] = "add_favorite";
         return response()->json([$response], 200);
+        
+    }
+
+    public function addConnection($first_user_id, $second_user_id){
+        $user = User::find($first_user_id);
+        $user_to_add = User::find($second_user_id);
+        $user->connection()->save($user_to_add);
     }
 
     public function removeConnection(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_to_remove = User::find($request->user_id);
         $connection = $user->connection()->find($user_to_remove);
         if($connection){
@@ -55,18 +81,6 @@ class userController extends Controller
             
     }
 
-    public function addFavorite(Request $request){
-        //check if exists and if yes -> add connection and favorite(notifie users that connection created) else -> add favorite | add notification on favorite
-        $user_id = auth()->user()->id;
-        $user = User::find($user_id);
-
-        $user_to_favorite = User::find($request->user_id);
-        $user->favorite()->save($user_to_favorite);
-
-        $response['status'] = "add_favorite";
-        return response()->json([$response], 200);
-    }
-
     public function blockUser(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
@@ -78,47 +92,53 @@ class userController extends Controller
 
     public function sendMessage(Request $request){
         $user_id = auth()->user()->id;
-        // $user = User::find($user_id); check if connection exists 
-        $message = new UserMessage;
-        $message->sender_id = $user_id;
-        $message->receiver_id= $request->receiver_id;
-		$message->body= $request->body;
-		$message->is_approved= 0;	
-		$message->is_read= 0;
-        $message->save();
-        
-        $response['status'] = "message_sent";
-        return response()->json([$response], 200);
+        $first_user = User::find($user_id);
+        $second_user = User::find($request->receiver_id);
+        $connection_exist = $first_user->connection()->where([['user1_id', '=', $first_user->id],
+                                                              ['user2_id', '=' , $second_user->id]
+                                                             ]) 
+                                                     ->orWhere([['user2_id', '=', $first_user->id],
+                                                                ['user1_id', '=' , $second_user->id]
+                                                               ])
+                                                    ->first();
+        if($connection_exist){
+            $message = new UserMessage;
+            $message->sender_id = $user_id;
+            $message->receiver_id= $request->receiver_id;
+            $message->body= $request->body;
+            $message->is_approved= 0;	
+            $message->is_read= 0;
+            $message->save();
+            $response['status'] = "message_sent";
+            return response()->json([$response], 200);
+        }else{
+            $response['status'] = "access denied";
+            return response()->json([$response], 403);
+        }
     }
 
     public function addInterest(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_interest = new UserInterest;
         $user_interest->name = $request->name;
         $user->interests()->save($user_interest);
-
         return response()->json([$user_interest], 200);
     }
 
     public function editInterest(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_interest = $user->interests()->find($request->interest_id);
         $user_interest->name = $request->name;
         $user_interest->save();
-
         return response()->json([$user_interest], 200);
     }
 
     public function getInterests(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_interests = $user->interests()->get();
-
         return response()->json([$user_interests], 200);
     }
 
@@ -126,52 +146,41 @@ class userController extends Controller
     public function addHobby(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_hobby = new UserHobby;
         $user_hobby->name = $request->name;
         $user->hobbies()->save($user_hobby);
-
         return response()->json([$user_hobby], 200);
     }
 
     public function editHobby(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_hobby = $user->hobbies()->find($request->hobby_id);
         $user_hobby->name = $request->name;
         $user_hobby->save();
-
         return response()->json([$user_hobby], 200);
     }
 
     public function getHobbies(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_hobbies = $user->hobbies()->get();
-
         return response()->json([$user_hobbies], 200);
     }
-
-    
 
     public function addNotification(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_notification = new UserNotification;
         $user_notification->body = $request->body;	
 		$user_notification->is_read = 0;	
         $user->notifications()->save($user_notification);
-
         return response()->json([$user_notification], 200);
     }
 
     public function searchUser(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $name = '%'.$request->name."%";
         $users = User::Search($name)
                        ->interestIn($user->interested_in)
@@ -189,33 +198,29 @@ class userController extends Controller
     public function getAllMatches(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $users = $user->connection()->where('user1_id', $user_id)
-                                ->orWhere('user2_id', $user_id)
-                                ->get();
-
+                                    ->orWhere('user2_id', $user_id)
+                                    ->get();
         return response()->json([$users], 200);                   
     }
 
     public function editProfile(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user->first_name = $request->first_name;
-        $user->last_name =$request->last_name;
-        $user->email =$request->email;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->gender =$request->gender;
-        $user->interested_in =$request->interested_in;
-        $user->dob =$request->dob;
-        $user->height =$request->height;
-        $user->weight =$request->weight;
-        $user->nationality =$request->nationality;
-        $user->net_worth =$request->net_worth;
-        $user->currency =$request->currency;
-        $user->bio =$request->bio;
+        $user->gender = $request->gender;
+        $user->interested_in = $request->interested_in;
+        $user->dob = $request->dob;
+        $user->height = $request->height;
+        $user->weight = $request->weight;
+        $user->nationality = $request->nationality;
+        $user->net_worth = $request->net_worth;
+        $user->currency = $request->currency;
+        $user->bio = $request->bio;
         $user->save();
-
         return response()->json([$users], 200);                   
     }
 

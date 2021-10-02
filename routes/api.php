@@ -38,7 +38,6 @@ Route::group([
 ], function ($router) {
 
     Route::post('/add-picture', [userController::class, 'addPicture']);    
-    Route::post('/add-connection', [userController::class, 'addConnection']);    
     Route::post('/remove-connection', [userController::class, 'removeConnection']);    
     Route::post('/add-favorite', [userController::class, 'addFavorite']);    
     Route::post('/block-user', [userController::class, 'blockUser']);    
