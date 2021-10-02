@@ -111,4 +111,6 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('first_name','LIKE' ,"$name")
                     ->orWhere('last_name','LIKE' , "$name");
     }
+
+   
 }

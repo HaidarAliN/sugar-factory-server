@@ -47,4 +47,10 @@ Route::group([
     Route::post('/add-hobby', [userController::class, 'addHobby']);    
     Route::post('/notification', [userController::class, 'addNotification']);    
     Route::post('/search', [userController::class, 'searchUser']);    
+    Route::get('/get-all-matches', [userController::class, 'getAllMatches']);    
+    Route::post('/edit-profile', [userController::class, 'editProfile']);    
+    Route::post('/edit-interset', [userController::class, 'editInterest']);    
+    Route::get('/get-intersets', [userController::class, 'getInterests']);    
+    Route::post('/edit-hobby', [userController::class, 'editHobby']);   
+    Route::get('/get-hobbies', [userController::class, 'getHobbies']);    
 });

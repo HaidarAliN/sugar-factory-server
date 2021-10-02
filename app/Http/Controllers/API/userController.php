@@ -102,6 +102,27 @@ class userController extends Controller
         return response()->json([$user_interest], 200);
     }
 
+    public function editInterest(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $user_interest = $user->interests()->find($request->interest_id);
+        $user_interest->name = $request->name;
+        $user_interest->save();
+
+        return response()->json([$user_interest], 200);
+    }
+
+    public function getInterests(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $user_interests = $user->interests()->get();
+
+        return response()->json([$user_interests], 200);
+    }
+
+
     public function addHobby(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
@@ -112,6 +133,28 @@ class userController extends Controller
 
         return response()->json([$user_hobby], 200);
     }
+
+    public function editHobby(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $user_hobby = $user->hobbies()->find($request->hobby_id);
+        $user_hobby->name = $request->name;
+        $user_hobby->save();
+
+        return response()->json([$user_hobby], 200);
+    }
+
+    public function getHobbies(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $user_hobbies = $user->hobbies()->get();
+
+        return response()->json([$user_hobbies], 200);
+    }
+
+    
 
     public function addNotification(Request $request){
         $user_id = auth()->user()->id;
@@ -142,4 +185,38 @@ class userController extends Controller
             return response()->json([$response], 404);
         }
     }
+
+    public function getAllMatches(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $users = $user->connection()->where('user1_id', $user_id)
+                                ->orWhere('user2_id', $user_id)
+                                ->get();
+
+        return response()->json([$users], 200);                   
+    }
+
+    public function editProfile(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $user->first_name = $request->first_name;
+        $user->last_name =$request->last_name;
+        $user->email =$request->email;
+        $user->password = bcrypt($request->password);
+        $user->gender =$request->gender;
+        $user->interested_in =$request->interested_in;
+        $user->dob =$request->dob;
+        $user->height =$request->height;
+        $user->weight =$request->weight;
+        $user->nationality =$request->nationality;
+        $user->net_worth =$request->net_worth;
+        $user->currency =$request->currency;
+        $user->bio =$request->bio;
+        $user->save();
+
+        return response()->json([$users], 200);                   
+    }
+
 }
