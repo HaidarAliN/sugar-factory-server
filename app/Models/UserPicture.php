@@ -11,6 +11,10 @@ class UserPicture extends Model{
 		return $this->belongsTo(User::class, 'id');
 	}
 
+	public function scopeUnApproved($query){
+        return $query->where('is_approved', '0');
+    }
+
 }
 
 

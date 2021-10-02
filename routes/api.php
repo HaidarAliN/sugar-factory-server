@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\adminController;
 use App\Http\Controllers\API\AuthController;
 
 /*
@@ -52,4 +53,18 @@ Route::group([
     Route::get('/get-intersets', [userController::class, 'getInterests']);    
     Route::post('/edit-hobby', [userController::class, 'editHobby']);   
     Route::get('/get-hobbies', [userController::class, 'getHobbies']);    
+});
+
+Route::group([
+    'middleware' => 'api',
+    'middleware' => 'auth.admin',
+
+], function ($router) {
+    Route::get('/get-sent-messages', [adminController::class, 'getMessages']);    
+    Route::post('/approve-message', [adminController::class, 'approveMessage']);    
+    Route::post('/decline-message', [adminController::class, 'declineMessage']);    
+    Route::get('/get-uploaded-images', [adminController::class, 'getImages']);    
+    Route::post('/approve-image', [adminController::class, 'approvetImage']);    
+    Route::post('/decline-image', [adminController::class, 'declineImage']);    
+
 });

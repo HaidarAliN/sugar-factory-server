@@ -8,6 +8,9 @@ class UserMessage extends Model{
 	protected $table = "user_messages";
 	
 
+	public function scopeUnApproved($query){
+        return $query->where('is_approved', '0');
+    }
 }
 
 
