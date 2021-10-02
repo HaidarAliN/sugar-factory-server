@@ -95,4 +95,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserNotification::class, 'user_id');
     }
 	
+    public function scopeIsUser($query){
+        return $query->where('user_type_id','=',2);
+    }
+
+    public function scopeNotMe($query, $id){
+        return $query->where('id','<>', $id);
+    }
+
+    public function scopeInterestIn($query, $interest){
+        return $query->where('gender','=', $interest);
+    }
+
+    public function scopeSearch($query, $name){
+        return $query->where('first_name','LIKE' ,"$name")
+                    ->orWhere('last_name','LIKE' , "$name");
+    }
 }

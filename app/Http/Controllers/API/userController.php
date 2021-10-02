@@ -70,10 +70,8 @@ class userController extends Controller
     public function blockUser(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-
         $user_to_block = User::find($request->user_id);
         $user->blockUser()->save($user_to_block);
-
         $response['status'] = "user_blocked";
         return response()->json([$response], 200);
     }
@@ -125,5 +123,23 @@ class userController extends Controller
         $user->notifications()->save($user_notification);
 
         return response()->json([$user_notification], 200);
+    }
+
+    public function searchUser(Request $request){
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        $name = '%'.$request->name."%";
+        $users = User::Search($name)
+                       ->interestIn($user->interested_in)
+                       ->isUser()
+                       ->notMe($user_id)
+                       ->get();
+        if(count($users) > 0){
+            return response()->json([$users], 200);
+        }else{
+            $response['status'] = "No results found";
+            return response()->json([$response], 404);
+        }
     }
 }

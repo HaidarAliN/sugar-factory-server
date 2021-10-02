@@ -46,4 +46,5 @@ Route::group([
     Route::post('/add-interest', [userController::class, 'addInterest']);    
     Route::post('/add-hobby', [userController::class, 'addHobby']);    
     Route::post('/notification', [userController::class, 'addNotification']);    
+    Route::post('/search', [userController::class, 'searchUser']);    
 });
