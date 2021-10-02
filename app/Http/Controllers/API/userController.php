@@ -56,6 +56,7 @@ class userController extends Controller
     }
 
     public function addFavorite(Request $request){
+        //check if exists and if yes -> add connection and favorite(notifie users that connection created) else -> add favorite | add notification on favorite
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
 
@@ -79,7 +80,7 @@ class userController extends Controller
 
     public function sendMessage(Request $request){
         $user_id = auth()->user()->id;
-        // $user = User::find($user_id);
+        // $user = User::find($user_id); check if connection exists 
         $message = new UserMessage;
         $message->sender_id = $user_id;
         $message->receiver_id= $request->receiver_id;
