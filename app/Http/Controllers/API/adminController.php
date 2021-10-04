@@ -15,8 +15,8 @@ use App\Models\UserNotification;
 class adminController extends Controller
 {
     public function getMessages(){
-        $messages = UserMessage::unApproved()->get();
-        return response()->json([$messages], 200);
+        $message = UserMessage::unApproved()->get();
+        return response()->json($message, 200);
     }
 
     public function approveMessage(Request $request){
@@ -24,19 +24,19 @@ class adminController extends Controller
         $message->is_approved = 1;
         $message->save();
         $response['status'] = "message approved";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
     }
 
     public function declineMessage(Request $request){
         $message = UserMessage::unApproved()->find($request->id);
         $message->delete();
         $response['status'] = "message declined";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
     }
 
     public function getImages(){
         $images = UserPicture::unApproved()->get();
-        return response()->json([$images], 200);
+        return response()->json($images, 200);
     }
 
     public function approvetImage(Request $request){
@@ -44,13 +44,13 @@ class adminController extends Controller
         $image->is_approved = 1;
         $image->save();
         $response['status'] = "image approved";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
     }
 
     public function declineImage(Request $request){
         $image = UserPicture::unApproved()->find($request->id);
         $image->delete();
         $response['status'] = "image declined";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
     }
 }

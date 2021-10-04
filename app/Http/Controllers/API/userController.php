@@ -22,7 +22,7 @@ class userController extends Controller
         $user_picture->is_profile_picture = $request->is_profile_picture;
         $user_picture->is_approved = 0;
         $user->pictures()->save($user_picture);
-        return response()->json([$user_picture], 200);
+        return response()->json($user_picture, 200);
     }
 
     public function addFavorite(Request $request){
@@ -46,7 +46,7 @@ class userController extends Controller
             $user->notifications()->save($user_notification);
             $response['action'] = 'Connection createrd';
             $response['status'] = "add_favorite";
-            return response()->json([$response], 200);
+            return response()->json($response, 200);
         }
         $user_to_favorite = User::find($request->user_id);
         $user->favorite()->save($user_to_favorite);
@@ -55,7 +55,7 @@ class userController extends Controller
 		$user_notification->is_read = 0;	
         $user_to_favorite->notifications()->save($user_notification);
         $response['status'] = "add_favorite";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
         
     }
 
@@ -77,7 +77,7 @@ class userController extends Controller
         }
         $connection->delete();
         $response['status'] = "connection_removed";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
             
     }
 
@@ -87,7 +87,7 @@ class userController extends Controller
         $user_to_block = User::find($request->user_id);
         $user->blockUser()->save($user_to_block);
         $response['status'] = "user_blocked";
-        return response()->json([$response], 200);
+        return response()->json($response, 200);
     }
 
     public function sendMessage(Request $request){
@@ -110,10 +110,10 @@ class userController extends Controller
             $message->is_read= 0;
             $message->save();
             $response['status'] = "message_sent";
-            return response()->json([$response], 200);
+            return response()->json($response, 200);
         }else{
             $response['status'] = "access denied";
-            return response()->json([$response], 403);
+            return response()->json($response, 403);
         }
     }
 
@@ -123,7 +123,7 @@ class userController extends Controller
         $user_interest = new UserInterest;
         $user_interest->name = $request->name;
         $user->interests()->save($user_interest);
-        return response()->json([$user_interest], 200);
+        return response()->json($user_interest, 200);
     }
 
     public function editInterest(Request $request){
@@ -132,14 +132,14 @@ class userController extends Controller
         $user_interest = $user->interests()->find($request->interest_id);
         $user_interest->name = $request->name;
         $user_interest->save();
-        return response()->json([$user_interest], 200);
+        return response()->json($user_interest, 200);
     }
 
     public function getInterests(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
         $user_interests = $user->interests()->get();
-        return response()->json([$user_interests], 200);
+        return response()->json($user_interests, 200);
     }
 
 
@@ -149,7 +149,7 @@ class userController extends Controller
         $user_hobby = new UserHobby;
         $user_hobby->name = $request->name;
         $user->hobbies()->save($user_hobby);
-        return response()->json([$user_hobby], 200);
+        return response()->json($user_hobby, 200);
     }
 
     public function editHobby(Request $request){
@@ -158,14 +158,14 @@ class userController extends Controller
         $user_hobby = $user->hobbies()->find($request->hobby_id);
         $user_hobby->name = $request->name;
         $user_hobby->save();
-        return response()->json([$user_hobby], 200);
+        return response()->json($user_hobby, 200);
     }
 
     public function getHobbies(Request $request){
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
         $user_hobbies = $user->hobbies()->get();
-        return response()->json([$user_hobbies], 200);
+        return response()->json($user_hobbies, 200);
     }
 
     public function addNotification(Request $request){
@@ -175,7 +175,7 @@ class userController extends Controller
         $user_notification->body = $request->body;	
 		$user_notification->is_read = 0;	
         $user->notifications()->save($user_notification);
-        return response()->json([$user_notification], 200);
+        return response()->json($user_notification, 200);
     }
 
     public function searchUser(Request $request){
@@ -188,10 +188,10 @@ class userController extends Controller
                        ->notMe($user_id)
                        ->get();
         if(count($users) > 0){
-            return response()->json([$users], 200);
+            return response()->json($users, 200);
         }else{
             $response['status'] = "No results found";
-            return response()->json([$response], 404);
+            return response()->json($response, 404);
         }
     }
 
@@ -201,7 +201,7 @@ class userController extends Controller
         $users = $user->connection()->where('user1_id', $user_id)
                                     ->orWhere('user2_id', $user_id)
                                     ->get();
-        return response()->json([$users], 200);                   
+        return response()->json($users, 200);                   
     }
 
     public function editProfile(Request $request){
@@ -221,7 +221,7 @@ class userController extends Controller
         $user->currency = $request->currency;
         $user->bio = $request->bio;
         $user->save();
-        return response()->json([$users], 200);                   
+        return response()->json($users, 200);                   
     }
 
 }
