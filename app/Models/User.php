@@ -87,6 +87,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserInterest::class, 'user_id');
     }
 
+    public function messages(){
+        return $this->hasMany(UserMessage::class, 'user_id');
+    }
+
+    public function favorites(){
+        return $this->hasMany(UserFavorite::class, 'user_id');
+    }
+
     public function hobbies(){
         return $this->hasMany(UserHobby::class, 'user_id');
     }

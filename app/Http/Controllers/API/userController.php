@@ -92,8 +92,10 @@ class userController extends Controller
 
     public function sendMessage(Request $request){
         $user_id = auth()->user()->id;
+        $messagefrom = UserMessage::find($request->receiver_id);
+        $reciever_id = $messagefrom->sender_id;
         $first_user = User::find($user_id);
-        $second_user = User::find($request->receiver_id);
+        $second_user = User::find($reciever_id);
         $connection_exist = $first_user->connection()->where([['user1_id', '=', $first_user->id],
                                                               ['user2_id', '=' , $second_user->id]
                                                              ]) 
@@ -104,7 +106,7 @@ class userController extends Controller
         if($connection_exist){
             $message = new UserMessage;
             $message->sender_id = $user_id;
-            $message->receiver_id= $request->receiver_id;
+            $message->receiver_id= $reciever_id;
             $message->body= $request->body;
             $message->is_approved= 0;	
             $message->is_read= 0;
@@ -207,7 +209,6 @@ class userController extends Controller
     public function editProfile(Request $request){
         $image_64 = $request->base;
         // try{
-
         //     $image_data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $image_64));
         // }catch (Exception $e) {
         //    $error =  $e->getMessage();
@@ -219,7 +220,6 @@ class userController extends Controller
         // $image_data->move(public_path('image'), $imageName );
         // $image = str_replace('data:image/png;base64,', '', $image);
         // $image = str_replace(' ', '+', $image);
-
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
         $user->first_name = $request->first_name;
@@ -248,5 +248,31 @@ class userController extends Controller
             return response()->json($response, 200);
         }
     }
+
+    public function getMessages(Request $request){
+        $user_id = auth()->user()->id;
+         $user = User::find($user_id);
+         $messages = UserMessage::where([
+                                ['receiver_id','=', $user_id],
+                                ['is_approved','=',1],
+                                ['is_read','=',0]
+                                ])
+                                 ->get();
+         foreach($messages as $msg){
+             $sender_id = $msg->sender_id;
+             $sender = User::find($sender_id);
+             $msg["first_name"] = $sender->first_name;
+             $msg["last_name"] = $sender->last_name;
+         }
+         return response()->json($messages,200);
+     }
+
+     public function setMessageAsRead(Request $request){
+        $message = UserMessage::find($request->message_id);
+        $message->is_read = 1;
+        $message->save();
+        $response['status'] = "ignored";
+        return response()->json($response);
+     }
 
 }
