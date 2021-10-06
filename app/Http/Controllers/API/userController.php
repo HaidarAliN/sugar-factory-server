@@ -191,7 +191,7 @@ class userController extends Controller
             return response()->json($users, 200);
         }else{
             $response['status'] = "No results found";
-            return response()->json($response, 404);
+            return response()->json($response, 200);
         }
     }
 
@@ -205,6 +205,21 @@ class userController extends Controller
     }
 
     public function editProfile(Request $request){
+        $image_64 = $request->base;
+        // try{
+
+        //     $image_data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $image_64));
+        // }catch (Exception $e) {
+        //    $error =  $e->getMessage();
+        //    return response()->json($error, 200);
+        // }
+        // $f = finfo_open();
+        // $mime_type = finfo_buffer($f, $image_data, FILEINFO_MIME_TYPE);
+        // $imageName = time().'.'.$mime_type;
+        // $image_data->move(public_path('image'), $imageName );
+        // $image = str_replace('data:image/png;base64,', '', $image);
+        // $image = str_replace(' ', '+', $image);
+
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
         $user->first_name = $request->first_name;
@@ -221,7 +236,17 @@ class userController extends Controller
         $user->currency = $request->currency;
         $user->bio = $request->bio;
         $user->save();
-        return response()->json($users, 200);                   
+        return response()->json($image_64, 200);                   
+    }
+
+    public function getUser(Request $request){
+        $user = User::find($request->id);
+        if($user){
+            return response()->json($user, 200);
+        }else{
+            $response['status'] = "No results found";
+            return response()->json($response, 200);
+        }
     }
 
 }

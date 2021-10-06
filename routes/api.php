@@ -53,6 +53,7 @@ Route::group([
     Route::get('/get-intersets', [userController::class, 'getInterests']);    
     Route::post('/edit-hobby', [userController::class, 'editHobby']);   
     Route::get('/get-hobbies', [userController::class, 'getHobbies']);    
+    Route::post('/get-user', [userController::class, 'getUser']);    
 });
 
 Route::group([
