@@ -11,18 +11,22 @@ use App\Models\UserMessage;
 use App\Models\UserInterest;
 use App\Models\UserHobby;
 use App\Models\UserNotification;
+use Illuminate\Support\Facades\Storage;
 
 class userController extends Controller
 {
     public function addPicture(Request $request){
+        $image = $request->image;  // your base64 encoded
+        $imageName = "str_random(".rand(10,1000).")".'.'.'jpeg';
+        $path=public_path();
+        \File::put($path. '/image/' . $imageName, base64_decode($image));
+        $response['status'] = "add_favorite";
         $user_id = auth()->user()->id;
         $user = User::find($user_id);
-        $user_picture = new UserPicture;
-        $user_picture->picture_url = $request->picture_url;
-        $user_picture->is_profile_picture = $request->is_profile_picture;
-        $user_picture->is_approved = 0;
-        $user->pictures()->save($user_picture);
-        return response()->json($user_picture, 200);
+        $user->p_path = '/image/'.$imageName;
+        $user->save();
+
+        return response()->json($user, 200);
     }
 
     public function addFavorite(Request $request){
@@ -273,6 +277,20 @@ class userController extends Controller
         $message->save();
         $response['status'] = "ignored";
         return response()->json($response);
+     }
+
+     public function getUserNotificaion(Request $request){
+        $user_id = auth()->user()->id;
+        $notification = User::find($user_id)->notifications()->where('is_read',0)->get();
+        return response()->json($notification);
+     }
+     
+     public function readNotificaion(Request $request){
+        $user_id = auth()->user()->id;
+        $notification = User::find($user_id)->notifications()->find($request->id);
+        $notification->is_read=1;
+        $notification->save();
+        return response()->json($notification);
      }
 
 }

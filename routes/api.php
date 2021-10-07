@@ -56,6 +56,8 @@ Route::group([
     Route::post('/get-user', [userController::class, 'getUser']);   
     Route::get('/get-messages', [userController::class, 'getMessages']); 
     Route::post('/set-message-as-read', [userController::class, 'setMessageAsRead']); 
+    Route::get('/get-user-notifications', [userController::class, 'getUserNotificaion']); 
+    Route::post('/read-notification', [userController::class, 'readNotificaion']); 
 });
 
 Route::group([
