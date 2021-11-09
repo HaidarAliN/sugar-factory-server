@@ -1,64 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# The Sugar Factory Server
+<img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400">
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Features
 
-## About Laravel
+- ### Admin Side:
+- Login
+- Able to approve / decline uploaded pictures before displaying to the recipient.
+- Able to approve / decline messages before displaying to the recipient.
+- ### Users:
+- Login / Signup
+- Upload pictures
+- Search and meet other users
+- Tap (favorite) someone
+- When there is a match (User A favorites User B and B favorites A), both users will be notified.
+- Users are able to text (send messages) to matched users only.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Laravel] - A web application framework with expressive, elegant syntax.
+- [JWT] - For authentication using JSON Web Tokens
+- [React WebApp] - The admin frontend.
+- [React Native App] - The user application.
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+Installcomposer on your machine using the following link: <br />
+<a href="https://getcomposer.org/download/">Composer download</a>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Clone the repository:
 
-### Premium Partners
+```sh
+git clone https://github.com/HaidarAliN/sugar-factory-server.git
+```
+In the command line, run:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+```sh
+cd sugar-factory-server
+composer update
+```
 
-## Contributing
+Copy the example env file and make the required configuration changes in the .env file
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```sh
+cp .env.example .env
+```
 
-## Code of Conduct
+Generate a new application key
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```sh
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+Generate a new JWT authentication secret key
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sh
+php artisan jwt:generate
+```
 
-## License
+Run the database migrations (Set the database connection in .env before migrating)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```sh
+php artisan migrate
+```
+
+Start the local development server
+
+```sh
+php artisan serve
+```
+
+You can now access the server at http://localhost:8000
+
+## Database seeding
+Populate the database with seed data with relationships which includes users, courses, uploaded materials, quizzes, questions and submissions. This can help you to quickly start testing the api or couple a frontend and start using it with ready content.
+
+Run the database seeder and you're done
+```sh
+php artisan db:seed
+```
+Note : It's recommended to have a clean database before seeding. You can refresh your migrations at any point to clean the database by running the following command
+
+```sh
+php artisan migrate:refresh
+```
+
+**You can now use the server**
+
+
+[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+
+   [JWT]: <https://www.positronx.io/laravel-jwt-authentication-tutorial-user-login-signup-api/>
+   [React WebApp]: <https://github.com/HaidarAliN/sugar-factory-admin-frontend.git>
+   [React Native App]: <https://github.com/HaidarAliN/sugar-factory-user-frontend.git>
+   [Laravel]: <https://laravel.com/>
+
